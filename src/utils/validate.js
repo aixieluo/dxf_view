@@ -2,6 +2,8 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+import { isString } from 'element-ui/src/utils/types'
+
 /**
  * @param {string} path
  * @returns {Boolean}
@@ -14,7 +16,6 @@ export function isExternal(path) {
  * @param {string} str
  * @returns {Boolean}
  */
-export function validUsername(str) {
-  const valid_map = ['admin', 'editor']
-  return valid_map.indexOf(str.trim()) >= 0
+export function validName(str) {
+  return isString(str) && str.length >= 0
 }
