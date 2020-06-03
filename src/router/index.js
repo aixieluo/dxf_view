@@ -56,23 +56,38 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/users',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/users/index',
+    name: '用户管理',
+    meta: { title: '用户管理', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'index',
+        name: '用户管理',
+        component: () => import('@/views/users/index'),
+        meta: { title: '用户管理', icon: 'example' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'create',
+        name: '创建',
+        component: () => import('@/views/users/create'),
+        meta: { title: '创建', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: 'update',
+        name: '更新',
+        component: () => import('@/views/users/update'),
+        meta: { title: '更新', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: 'reset/password',
+        name: '更新密码',
+        component: () => import('@/views/users/resetPassword'),
+        meta: { title: '更新密码', icon: 'tree' },
+        hidden: true
       }
     ]
   },

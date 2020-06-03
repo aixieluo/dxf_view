@@ -1,11 +1,14 @@
 import Cookies from 'js-cookie'
+import { positions } from '@/api/user'
+import da from 'element-ui/src/locale/lang/da'
 
 const state = {
   sidebar: {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     withoutAnimation: false
   },
-  device: 'desktop'
+  device: 'desktop',
+  positions: []
 }
 
 const mutations = {
@@ -25,6 +28,9 @@ const mutations = {
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
+  },
+  INIT_POSITION: (state, positions) => {
+    state.positions = positions
   }
 }
 
@@ -37,6 +43,21 @@ const actions = {
   },
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
+  },
+  initPositions({ commit }) {
+    return new Promise((resolve, reject) => {
+      if (state.positions.length < 1) {
+        positions().then(response => {
+          const { data } = response
+          commit('INIT_POSITION', data)
+          resolve(data)
+        }).catch(error => {
+          reject(error)
+        })
+      } else {
+        resolve(state.positions)
+      }
+    })
   }
 }
 

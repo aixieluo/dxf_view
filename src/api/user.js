@@ -22,9 +22,16 @@ export function logout() {
   })
 }
 
-// export function resetToken() {
-//   return request({
-//     url: '/auth/refresh',
-//     method: 'post'
-//   })
-// }
+export function resetToken() {
+  return request({
+    url: '/auth/refresh',
+    method: 'post'
+  })
+}
+
+export function positions() {
+  return request({
+    url: '/positions',
+    method: 'get'
+  })
+}

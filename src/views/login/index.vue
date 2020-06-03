@@ -6,15 +6,15 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="name">
+      <el-form-item prop="nickname">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="name"
-          v-model="loginForm.name"
+          ref="nickname"
+          v-model="loginForm.nickname"
           placeholder="Account"
-          name="name"
+          name="nickname"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -43,17 +43,17 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
-<!--      <div class="tips">-->
-<!--        <span style="margin-right:20px;">name: admin</span>-->
-<!--        <span> password: any</span>-->
-<!--      </div>-->
+      <!--      <div class="tips">-->
+      <!--        <span style="margin-right:20px;">name: admin</span>-->
+      <!--        <span> password: any</span>-->
+      <!--      </div>-->
 
     </el-form>
   </div>
 </template>
 
 <script>
-import { validName } from '@/utils/validate'
+import { validName } from '../../utils/validate'
 
 export default {
   name: 'Login',
@@ -74,11 +74,11 @@ export default {
     }
     return {
       loginForm: {
-        name: null,
+        nickname: 'admin',
         password: '123123'
       },
       loginRules: {
-        name: [{ required: true, trigger: 'blur', validator: validateName }],
+        nickname: [{ required: true, trigger: 'blur', validator: validateName }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,

@@ -53,18 +53,14 @@ service.interceptors.response.use(
     // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
     if (Number(error.response.status) === 401) {
       // to re-login
-      console.log(1)
       MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
         confirmButtonText: 'Re-Login',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        console.log(2)
         store.dispatch('user/resetToken').then(() => {
-          console.log(3)
           location.reload()
         }).catch(() => {
-          console.log(4)
           // this.$router.push({ 'path': '/login' })
         })
       })

@@ -105,3 +105,15 @@ export function param2Obj(url) {
       '"}'
   )
 }
+
+export function serialize(json) {
+  let s = ''
+  for (const key of Object.keys(json)) {
+    if (s !== '') {
+      s += `&${key}=${json[key]}`
+    } else {
+      s += `${key}=${json[key]}`
+    }
+  }
+  return s
+}
