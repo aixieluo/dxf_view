@@ -7,8 +7,8 @@
             <el-option
               v-for="(item, key) in sofas"
               :label="item"
-              :value="key">
-            </el-option>
+              :value="key"
+            />
           </el-select>
           <el-date-picker
             v-model="dates"
@@ -18,8 +18,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             @change="pickDates"
-          >
-          </el-date-picker>
+          />
           <el-button type="primary" @click="fetchData">筛选</el-button>
         </div>
       </el-col>
@@ -88,23 +87,24 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button type="text" v-if="!scope.row.confirmed_at"><app-link :to="`/order/${scope.row.id}/update`">修改</app-link></el-button>
+          <el-button v-if="!scope.row.confirmed_at" type="text"><app-link :to="`/order/${scope.row.id}/update`">修改</app-link></el-button>
           <el-popconfirm
             v-if="!scope.row.confirmed_at"
-            confirmButtonText='好的'
-            cancelButtonText='不用了'
+            confirm-button-text="好的"
+            cancel-button-text="不用了"
             icon="el-icon-info"
-            iconColor="red"
+            icon-color="red"
             title="是否确认这笔订单，确认后不可修改"
             @onConfirm="confirmOrder(scope.row)"
           >
             <el-button slot="reference" type="text">确认</el-button>
           </el-popconfirm>
           <el-popconfirm
-            confirmButtonText='好的'
-            cancelButtonText='不用了'
+            v-if="del"
+            confirm-button-text="好的"
+            cancel-button-text="不用了"
             icon="el-icon-info"
-            iconColor="red"
+            icon-color="red"
             title="是否删除这笔订单，删除后不可恢复"
             @onConfirm="delOrder(scope)"
           >
@@ -129,9 +129,10 @@
 </template>
 
 <script>
-  import { orders, confirm, del } from '../../api/order'
+import { orders, confirm, del } from '../../api/order'
 import { serialize } from '@/utils/index'
 import AppLink from '../../layout/components/Sidebar/Link'
+import { checkPermission } from '../../utils/auth'
 
 export default {
   components: { AppLink },
@@ -150,6 +151,11 @@ export default {
         end: '',
         sofa_id: ''
       }
+    }
+  },
+  computed: {
+    del() {
+      return checkPermission(['admin', 'operator', 'sale'])
     }
   },
   created() {

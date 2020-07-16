@@ -26,15 +26,13 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
-        next()
-      } else {
+      if (store.getters.roles.length === 0) {
         try {
-          // get user info
-          await store.dispatch('user/getInfo')
-
-          next()
+          const { roles } = await store.dispatch('user/getInfo')
+          await store.dispatch('permission/GenerateRoutes', { roles })
+          router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+          next({ replace: true })
+          // next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
@@ -42,6 +40,8 @@ router.beforeEach(async(to, from, next) => {
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
+      } else {
+        next()
       }
     }
   } else {
