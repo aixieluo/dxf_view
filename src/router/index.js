@@ -60,7 +60,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/users/index',
     name: '用户管理',
-    meta: { title: '用户管理', icon: 'example' },
+    meta: { title: '用户管理', icon: 'example', roles: ['admin'] },
     children: [
       {
         path: 'index',
@@ -93,83 +93,122 @@ export const constantRoutes = [
   },
 
   {
-    path: '/form',
+    path: '/report',
     component: Layout,
+    redirect: '/report/material',
+    name: '报表',
+    meta: { title: '报表', icon: 'example' },
+    children: [
+      {
+        path: 'material',
+        name: '材料',
+        component: () => import('@/views/report/material'),
+        meta: { title: '材料', icon: 'example' }
+      },
+      {
+        path: 'user',
+        name: '人员',
+        component: () => import('@/views/report/user'),
+        meta: { title: '人员', icon: 'tree' },
+      }
+    ]
+  },
+
+  {
+    path: '/order',
+    component: Layout,
+    redirect: '/order/index',
+    name: '订单管理',
+    meta: { title: '订单管理', icon: 'example' },
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        name: '订单管理',
+        component: () => import('@/views/order/index'),
+        meta: { title: '订单管理', icon: 'example', roles: ['admin', 'sale', 'operator'] }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'create',
+        name: '创建',
+        component: () => import('@/views/order/create'),
+        meta: { title: '创建', icon: 'tree', roles: ['admin', 'sale', 'operator'] },
+        hidden: true
+      },
+      {
+        path: ':id/update',
+        name: '更新',
+        component: () => import('@/views/order/update'),
+        meta: { title: '更新', icon: 'tree', roles: ['admin', 'sale', 'operator'] },
+        hidden: true
+      },
+      {
+        path: ':id/design/update',
+        name: '定制规格',
+        component: () => import('@/views/order/design'),
+        meta: { title: '定制规格', icon: 'tree', roles: ['admin', 'sale', 'operator'] },
+        hidden: true
       }
     ]
   },
 
   {
-    path: 'external-link',
+    path: '/sofa',
     component: Layout,
+    redirect: '/sofa/index',
+    name: '产品管理',
+    meta: { title: '产品管理', icon: 'example', roles: ['admin', 'operator'] },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'index',
+        name: '产品管理',
+        component: () => import('@/views/sofa/index'),
+        meta: { title: '产品管理', icon: 'example' }
+      },
+      {
+        path: 'create',
+        name: '创建',
+        component: () => import('@/views/sofa/create'),
+        meta: { title: '创建', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: ':id/update',
+        name: '更新',
+        component: () => import('@/views/sofa/update'),
+        meta: { title: '更新', icon: 'tree' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/sofa/:id/items',
+    component: Layout,
+    redirect: '/sofa/index',
+    name: '产品管理',
+    meta: { title: '产品管理', icon: 'example' },
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        name: '产品规格管理',
+        component: () => import('@/views/sofaItem/index'),
+        meta: { title: '产品规格管理', icon: 'example' },
+        hidden: true
+      },
+      {
+        path: 'create',
+        name: '创建',
+        component: () => import('@/views/sofaItem/create'),
+        meta: { title: '创建', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: ':itemId/update',
+        name: '更新',
+        component: () => import('@/views/sofaItem/update'),
+        meta: { title: '更新', icon: 'tree' },
+        hidden: true
       }
     ]
   },
