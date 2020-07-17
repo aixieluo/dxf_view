@@ -22,7 +22,7 @@
           <el-button type="primary" @click="fetchData">筛选</el-button>
         </div>
       </el-col>
-      <el-col :span="4"><el-button type="primary"><app-link :to="`/order/create`">创建新订单</app-link></el-button></el-col>
+      <el-col :span="4"><el-button type="primary" v-if="del"><app-link :to="`/order/create`">创建新订单</app-link></el-button></el-col>
     </el-row>
     <el-table
       v-loading="listLoading"
@@ -85,9 +85,9 @@
           <el-button type="text"><app-link :to="`/order/${scope.row.id}/design/update`">详情</app-link></el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="100">
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button v-if="!scope.row.confirmed_at" type="text"><app-link :to="`/order/${scope.row.id}/update`">修改</app-link></el-button>
+          <el-button v-if="!scope.row.confirmed_at && del" type="text"><app-link :to="`/order/${scope.row.id}/update`">修改</app-link></el-button>
           <el-popconfirm
             v-if="!scope.row.confirmed_at"
             confirm-button-text="好的"
@@ -99,6 +99,7 @@
           >
             <el-button slot="reference" type="text">确认</el-button>
           </el-popconfirm>
+          <el-button type="text" v-if="scope.row.confirmed_at"><a :href="`${baseUrl}/order/${scope.row.id}/drawing/download`">下载绘图</a></el-button>
           <el-popconfirm
             v-if="del"
             confirm-button-text="好的"
@@ -156,6 +157,9 @@ export default {
   computed: {
     del() {
       return checkPermission(['admin', 'operator', 'sale'])
+    },
+    baseUrl() {
+      return process.env.VUE_APP_BASE_API
     }
   },
   created() {

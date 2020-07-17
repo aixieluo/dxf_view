@@ -22,18 +22,18 @@
       </el-collapse-item>
     </el-collapse>
     <h5>定制规格</h5>
-    <el-tabs :lazy="true" type="card" v-model="activeIndex" @tab-click="handleClick">
+    <el-tabs v-model="activeIndex" :lazy="true" type="card" @tab-click="handleClick">
       <el-tab-pane v-for="(design, i) in designs" :label="design.name" :design="design" :name="'index' + i">
         <el-form ref="form" :model="form" :rule="rules" label-width="80px">
           <el-form-item label="规格名称">
             <span>{{ design.name }}</span>
           </el-form-item>
-          <el-form-item label="规格名称">
+          <el-form-item label="示意图">
             <el-image
               style="width: 100px; height: 100px"
               :src="design.img"
-              fit="fill">
-            </el-image>
+              fit="fill"
+            />
           </el-form-item>
           <el-form-item v-for="type in design.types" :label="type">
             <span v-if="order.confirmed_at">{{ form.lengths[type] }}</span>
@@ -41,11 +41,14 @@
               v-else
               v-model="form.lengths[type]"
               placeholder="单位：cm"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="个数">
             <span v-if="order.confirmed_at">{{ form.count }}</span>
-            <el-input v-else v-model="form.count" :ref="form.count"></el-input>
+            <el-input v-else :ref="form.count" v-model="form.count" />
+          </el-form-item>
+          <el-form-item label="耗材(cm)">
+            <span>{{ `${form.width}` }}</span>
           </el-form-item>
           <el-form-item>
             <el-button v-if="!order.confirmed_at" :loading="loading" type="primary" @click.native="onSubmit">保存</el-button>
@@ -57,83 +60,89 @@
 </template>
 
 <script>
-  import { order, orderDesign, update, updateOrderDesign } from '../../api/order'
-  import { sofa, sofaList } from '../../api/sofa'
+import { order, orderDesign, update, updateOrderDesign } from '../../api/order'
+import { sofa, sofaList } from '../../api/sofa'
 
-  export default {
-    data() {
-      return {
-        form: {
-          lengths: {},
-          count: ''
-        },
-        order: {
-          oid: '',
-          recipient_information: '',
-          sofa: {},
-          sofa_item: {},
-          note: '',
-          ods: {}
-        },
-        designs: [
-          {id: 0}
-        ],
-        activeDesign: {},
-        rules: {
-          lengths: [{ required: true, trigger: 'blur', message: '边长必填' }],
-          count: [{ required: true, trigger: 'blur', message: '个数必填' }]
-        },
-        loading: false,
-        activeIndex: 'index0'
-      }
-    },
-    computed: {
-      id() {
-        return this.$route.params.id
+export default {
+  data() {
+    return {
+      form: {
+        lengths: {},
+        count: '',
+        width: ''
       },
+      order: {
+        oid: '',
+        recipient_information: '',
+        sofa: {},
+        sofa_item: {},
+        note: '',
+        ods: {}
+      },
+      designs: [
+        { id: 0 }
+      ],
+      activeDesign: {},
+      rules: {
+        lengths: [{ required: true, trigger: 'blur', message: '边长必填' }],
+        count: [{ required: true, trigger: 'blur', message: '个数必填' }]
+      },
+      loading: false,
+      activeIndex: 'index0'
+    }
+  },
+  computed: {
+    id() {
+      return this.$route.params.id
+    }
+  },
+  mounted() {
+    order(this.id).then(res => {
+      const { data } = res
+      this.order = data
+      this.designs = data.sofa.designs
+      this.activeDesign = data.sofa.designs[0]
+      this.freshDesign()
+    })
+  },
+  methods: {
+    handleClick(tab, event) {
+      this.activeDesign = tab.$attrs.design
+      this.freshDesign()
     },
-    mounted() {
-      order(this.id).then(res => {
+    freshDesign() {
+      orderDesign(this.id, this.activeDesign.id).then(res => {
         const { data } = res
-        this.order = data
-        this.designs = data.sofa.designs
-        this.activeDesign = data.sofa.designs[0]
-        this.freshDesign()
+        this.form.lengths = data.lengths || {}
+        this.form.count = data.count || ''
+        this.form.width = data.width || ''
       })
     },
-    methods: {
-      handleClick(tab, event) {
-        this.activeDesign = tab.$attrs.design
-        this.freshDesign()
-      },
-      freshDesign() {
-        orderDesign(this.id, this.activeDesign.id).then(res => {
-          const { data } = res
-          this.form.lengths = data.lengths || {}
-          this.form.count = data.count || ''
-        })
-      },
-      onSubmit() {
-        for (let i = 0; i < this.activeDesign.types.length; i++) {
-          let k = this.activeDesign.types[i]
-          if (!this.form.lengths[k]) {
-            return this.$message.error(`${k}必须填写`)
-          }
+    onSubmit() {
+      for (let i = 0; i < this.activeDesign.types.length; i++) {
+        const k = this.activeDesign.types[i]
+        if (!this.form.lengths[k]) {
+          return this.$message.error(`${k}必须填写`)
         }
-        if (!(this.form.count >= 0)) {
-          return this.$message.error(`个数必须填写`)
-        }
-        this.loading = true
-        updateOrderDesign(this.id, this.activeDesign.id, this.form).then(response => {
-          this.$message('保存成功')
-          this.loading = false
-        }).catch(error => {
-          console.log(error)
-          this.loading = false
-        })
       }
+      if (!(this.form.count >= 0)) {
+        return this.$message.error(`个数必须填写`)
+      }
+      this.loading = true
+      updateOrderDesign(this.id, this.activeDesign.id, this.form).then(response => {
+        this.$message('保存成功')
+        this.loading = false
+        const { data } = response
+        this.form.lengths = data.lengths || {}
+        this.form.count = data.count || ''
+        this.form.width = data.width || ''
+      }).catch(error => {
+        console.log(error)
+        this.loading = false
+      })
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
