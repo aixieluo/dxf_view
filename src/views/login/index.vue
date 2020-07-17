@@ -74,8 +74,8 @@ export default {
     }
     return {
       loginForm: {
-        nickname: 'admin',
-        password: '123123'
+        nickname: '',
+        password: ''
       },
       loginRules: {
         nickname: [{ required: true, trigger: 'blur', validator: validateName }],

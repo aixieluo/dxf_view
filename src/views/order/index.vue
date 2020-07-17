@@ -43,11 +43,11 @@
           {{ scope.row.oid }}
         </template>
       </el-table-column>
-      <el-table-column label="日期" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="日期" align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ scope.row.id }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="提交人" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.user.name }}</span>

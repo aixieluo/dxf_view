@@ -31,13 +31,13 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/users/index',
     name: '用户管理',
-    meta: { title: '用户管理', icon: 'example', roles: ['admin'] },
+    meta: { title: '用户管理', icon: 'nested', roles: ['admin'] },
     children: [
       {
         path: 'index',
         name: '用户管理',
         component: () => import('@/views/users/index'),
-        meta: { title: '用户管理', icon: 'example' }
+        meta: { title: '用户管理', icon: 'user' }
       },
       {
         path: 'create',
@@ -68,7 +68,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/report/material',
     name: '报表',
-    meta: { title: '报表', icon: 'example' },
+    meta: { title: '报表', icon: 'form' },
     children: [
       {
         path: 'material',
@@ -80,7 +80,7 @@ export const asyncRouterMap = [
         path: 'user',
         name: '人员',
         component: () => import('@/views/report/user'),
-        meta: { title: '人员', icon: 'tree' }
+        meta: { title: '人员', icon: 'user' }
       }
     ]
   },
@@ -96,7 +96,7 @@ export const asyncRouterMap = [
         path: 'index',
         name: '订单管理',
         component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'example', roles: ['admin', 'sale', 'operator'] }
+        meta: { title: '订单管理', icon: 'nested', roles: ['admin', 'sale', 'operator'] }
       },
       {
         path: 'create',
@@ -133,7 +133,7 @@ export const asyncRouterMap = [
         path: 'index',
         name: '产品管理',
         component: () => import('@/views/sofa/index'),
-        meta: { title: '产品管理', icon: 'example' }
+        meta: { title: '产品管理', icon: 'tree' }
       },
       {
         path: 'create',
@@ -211,7 +211,7 @@ export const constantRouterMap = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
