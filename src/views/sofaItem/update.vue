@@ -132,7 +132,7 @@ export default {
     sofaItem(this.id, this.itemId).then(res => {
       const { data } = res
       this.form = data
-      this.files = [{ url: 'http://dxf.ssl' + data.preview, name: 'test' }]
+      this.files = [{ url: data.preview, name: 'test' }]
     })
   },
   methods: {
