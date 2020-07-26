@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-steps v-if="step" :active="2" align-center style="margin-bottom: 30px">
+      <el-step title="已完成" />
+      <el-step title="选择订单使用模板" />
+    </el-steps>
     <el-collapse>
       <el-collapse-item title="订单信息" name="1">
         <el-form auto-complete="on" label-width="120px">
@@ -30,8 +34,8 @@
           </el-form-item>
           <el-form-item label="示意图">
             <el-image
-              style="width: 100px; height: 100px"
-              :src="design.img"
+              style="width: 500px; height: 500px"
+              :src="design.url"
               fit="fill"
             />
           </el-form-item>
@@ -48,20 +52,27 @@
             <el-input v-else :ref="form.count" v-model="form.count" />
           </el-form-item>
           <el-form-item label="耗材(cm)">
-            <span>{{ `${form.width}` }}</span>
+            <span>{{ `${form.width * form.count}` }}</span>
+          </el-form-item>
+          <el-form-item label="辅料">
+            <span>{{ `${form.design.accessories}` }}</span>
+          </el-form-item>
+          <el-form-item label="辅料个数">
+            <span>{{ `${form.design.accessories_count * form.count}` }}</span>
           </el-form-item>
           <el-form-item>
             <el-button v-if="!order.confirmed_at" :loading="loading" type="primary" @click.native="onSubmit">保存</el-button>
+            <el-button v-if="!order.confirmed_at && form.width" :loading="loading" type="danger" @click.native="onDel">删除</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
+    <el-button v-if="order.confirmed_at" type="primary"><a target="_blank" :href="order.print">打印</a></el-button>
   </div>
 </template>
 
 <script>
-import { order, orderDesign, update, updateOrderDesign } from '../../api/order'
-import { sofa, sofaList } from '../../api/sofa'
+import { order, orderDesign, updateOrderDesign, delOrderDesign } from '../../api/order'
 
 export default {
   data() {
@@ -69,7 +80,11 @@ export default {
       form: {
         lengths: {},
         count: '',
-        width: ''
+        width: '',
+        design: {
+          accessories: '',
+          accessories_count: 0
+        }
       },
       order: {
         oid: '',
@@ -77,7 +92,8 @@ export default {
         sofa: {},
         sofa_item: {},
         note: '',
-        ods: {}
+        ods: {},
+        print: ''
       },
       designs: [
         { id: 0 }
@@ -94,6 +110,9 @@ export default {
   computed: {
     id() {
       return this.$route.params.id
+    },
+    step() {
+      return this.$route.query.step
     }
   },
   mounted() {
@@ -116,6 +135,8 @@ export default {
         this.form.lengths = data.lengths || {}
         this.form.count = data.count || ''
         this.form.width = data.width || ''
+        this.form.design.accessories = data.design ? data.design.accessories : ''
+        this.form.design.accessories_count = data.design ? data.design.accessories_count : ''
       })
     },
     onSubmit() {
@@ -136,6 +157,24 @@ export default {
         this.form.lengths = data.lengths || {}
         this.form.count = data.count || ''
         this.form.width = data.width || ''
+      }).catch(error => {
+        console.log(error)
+        this.loading = false
+      })
+    },
+    onDel() {
+      this.loading = true
+      delOrderDesign(this.id, this.activeDesign.id).then(res => {
+        this.loading = false
+        this.form = {
+          lengths: {},
+          count: '',
+          width: '',
+          design: {
+            accessories: '',
+            accessories_count: 0
+          }
+        }
       }).catch(error => {
         console.log(error)
         this.loading = false

@@ -33,14 +33,14 @@ export function update(id, data) {
 export function del(id) {
   return request({
     url: `order/${id}/delete`,
-    method: 'post',
+    method: 'post'
   })
 }
 
 export function confirm(id) {
   return request({
     url: `order/${id}/confirm`,
-    method: 'post',
+    method: 'post'
   })
 }
 
@@ -51,11 +51,17 @@ export function orderDesign(id, d_id) {
   })
 }
 
-
 export function updateOrderDesign(id, d_id, data) {
   return request({
     url: `order/${id}/design/${d_id}/update`,
     method: 'post',
     data
+  })
+}
+
+export function delOrderDesign(id, d_id) {
+  return request({
+    url: `order/${id}/design/${d_id}/delete`,
+    method: 'post'
   })
 }

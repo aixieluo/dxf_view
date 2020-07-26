@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-steps :active="1" align-center style="margin-bottom: 30px">
+      <el-step title="创建订单" />
+      <el-step title="选择订单使用模板" />
+    </el-steps>
     <el-form ref="form" :model="form" :rules="rules" auto-complete="on" label-width="120px">
       <el-form-item label="淘宝订单号" prop="oid">
         <el-input
@@ -16,9 +20,9 @@
       </el-form-item>
       <el-form-item label="规格型号" prop="sofa_cover_id">
         <el-radio-group
-          @change="getSofa"
           ref="sofa_cover_id"
           v-model="form.sofa_cover_id"
+          @change="getSofa"
         >
           <el-radio v-for="sofa in sofas" :label="sofa.id">{{ sofa.name }}</el-radio>
         </el-radio-group>
@@ -46,7 +50,7 @@
 </template>
 
 <script>
-import {sofaList, sofa } from '../../api/sofa'
+import { sofaList, sofa } from '../../api/sofa'
 import { create } from '../../api/order'
 
 export default {
@@ -82,7 +86,8 @@ export default {
         if (valid) {
           this.loading = true
           create(this.form).then(response => {
-            this.$router.push('/order/index')
+            const { data } = response
+            this.$router.push(`/order/${data.id}/design/update?step=1`)
             this.loading = false
           }).catch(error => {
             console.log(error)

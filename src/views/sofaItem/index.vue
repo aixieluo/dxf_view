@@ -37,7 +37,7 @@
           <span>{{ scope.row.uid }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="颜色" align="center">
+      <el-table-column label="规格名称" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.color }}</span>
         </template>

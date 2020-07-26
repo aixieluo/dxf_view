@@ -45,10 +45,21 @@
           <span>{{ scope.row.updated_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="180">
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="text"><app-link :to="`/users/update?id=${scope.row.id}`">修改信息</app-link></el-button>
           <el-button type="text"><app-link :to="`/users/reset/password?id=${scope.row.id}`">修改密码</app-link></el-button>
+          <el-popconfirm
+            v-if="meta.canDel"
+            confirm-button-text="好的"
+            cancel-button-text="不用了"
+            icon="el-icon-info"
+            icon-color="red"
+            title="是否删除这个用户，删除后不可恢复"
+            @onConfirm="delUser(scope)"
+          >
+            <el-button slot="reference" type="text">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -71,6 +82,7 @@
 import { users } from '@/api/users'
 import { serialize } from '@/utils/index'
 import AppLink from '../../layout/components/Sidebar/Link'
+import { destroy } from '../../api/users'
 
 export default {
   components: { AppLink },
@@ -82,7 +94,8 @@ export default {
       filter: {
         perPage: 10,
         page: 1
-      }
+      },
+      meta: {}
     }
   },
   created() {
@@ -93,6 +106,7 @@ export default {
       this.listLoading = true
       users(serialize(this.filter)).then(response => {
         this.list = response.data.list.data
+        this.meta = response.data.meta
         this.total = response.data.list.total
         this.filter.page = response.data.list.current_page
         this.listLoading = false
@@ -103,6 +117,11 @@ export default {
     },
     handleSizeChange() {
       this.fetchData()
+    },
+    delUser(rows) {
+      destroy(rows.row.id).then(res => {
+        this.list.splice(rows.$index)
+      })
     }
   }
 }

@@ -20,7 +20,7 @@
           v-model="form.uid"
         />
       </el-form-item>
-      <el-form-item label="颜色" prop="color">
+      <el-form-item label="规格名称" prop="color">
         <el-input
           ref="color"
           v-model="form.color"

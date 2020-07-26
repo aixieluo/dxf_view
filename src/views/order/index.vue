@@ -19,10 +19,11 @@
             end-placeholder="结束日期"
             @change="pickDates"
           />
-          <el-button type="primary" @click="fetchData">筛选</el-button>
+          <el-input v-model="filter.name" type="text" style="width: 180px;" placeholder="订单号或提交人姓名" />
+          <el-button type="primary" @click="fetchData">搜索</el-button>
         </div>
       </el-col>
-      <el-col :span="4"><el-button type="primary" v-if="del"><app-link :to="`/order/create`">创建新订单</app-link></el-button></el-col>
+      <el-col :span="4"><el-button v-if="del" type="primary"><app-link :to="`/order/create`">创建新订单</app-link></el-button></el-col>
     </el-row>
     <el-table
       v-loading="listLoading"
@@ -32,7 +33,14 @@
       border
       fit
       highlight-current-row
+      :row-class-name="rowClass"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+      />
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.id }}
@@ -43,11 +51,11 @@
           {{ scope.row.oid }}
         </template>
       </el-table-column>
-<!--      <el-table-column label="日期" align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.id }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="日期" align="center">-->
+      <!--        <template slot-scope="scope">-->
+      <!--          <span>{{ scope.row.id }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <el-table-column label="提交人" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.user.name }}</span>
@@ -83,6 +91,7 @@
       <el-table-column align="center" label="定制规格" width="100">
         <template slot-scope="scope">
           <el-button type="text"><app-link :to="`/order/${scope.row.id}/design/update`">详情</app-link></el-button>
+          <div>{{ scope.row.designs_count< 1 ? '(定制数0)' : '' }}</div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -99,7 +108,7 @@
           >
             <el-button slot="reference" type="text">确认</el-button>
           </el-popconfirm>
-          <el-button type="text" v-if="scope.row.confirmed_at"><a :href="`${baseUrl}/order/${scope.row.id}/drawing/download`">下载绘图</a></el-button>
+          <el-button v-if="scope.row.confirmed_at" type="text"><a :href="`${baseUrl}/order/${scope.row.id}/drawing/download`">下载绘图</a></el-button>
           <el-popconfirm
             v-if="del"
             confirm-button-text="好的"
@@ -114,6 +123,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <div style="margin: 20px 0">
+      <el-alert
+        title="绿色的行才可以下载绘图，不是绿色的即使选中了也不会加入到现在的集合里"
+        style="margin-bottom: 20px;width: 600px"
+        type="info"
+        show-icon
+        v-if="showInfo"
+        @close="closeD"
+      />
+      <el-button type="primary" :disabled="pickId.length < 1" @click="downloadZip">下载绘图合集</el-button>
+    </div>
     <el-pagination
       class="el-pagination__editor pagination"
       :hide-on-single-page="true"
@@ -144,13 +164,15 @@ export default {
       listLoading: true,
       total: 1,
       dates: [],
+      pickId: [],
       filter: {
         perPage: 10,
         page: 1,
         u: 1,
         start: '',
         end: '',
-        sofa_id: ''
+        sofa_id: '',
+        name: ''
       }
     }
   },
@@ -160,6 +182,9 @@ export default {
     },
     baseUrl() {
       return process.env.VUE_APP_BASE_API
+    },
+    showInfo() {
+      return !localStorage.getItem('orderDownload')
     }
   },
   created() {
@@ -197,6 +222,33 @@ export default {
     pickDates(dates) {
       this.filter.start = dates ? dates[0] : ''
       this.filter.end = dates ? dates[1] : ''
+    },
+    rowClass({ row, index }) {
+      if (row.confirmed_at) {
+        return 'success-row'
+      }
+    },
+    handleSelectionChange(val) {
+      this.pickId = []
+      for (let i = 0; i < val.length; i++) {
+        if (val[i]['confirmed_at']) {
+          this.pickId.push(val[i]['id'])
+        }
+      }
+    },
+    downloadZip() {
+      let query = '?'
+      for (let i = 0; i < this.pickId.length; i++) {
+        if (i > 0) {
+          query += `&ids[]=${this.pickId[i]}`
+        } else {
+          query += `ids[]=${this.pickId[i]}`
+        }
+      }
+      location.href = `${this.baseUrl}/order/drawing/zip/download${query}`
+    },
+    closeD() {
+      localStorage.setItem('orderDownload', 1)
     }
   }
 }
@@ -209,4 +261,5 @@ export default {
 .pagination {
   margin-top: 24px;
 }
+
 </style>
