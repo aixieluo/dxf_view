@@ -15,7 +15,7 @@
           type="textarea"
         />
       </el-form-item>
-      <el-form-item label="规格型号" prop="sofa_cover_id">
+      <el-form-item label="定制类型" prop="sofa_cover_id">
         <el-radio-group
           disabled
           ref="sofa_cover_id"

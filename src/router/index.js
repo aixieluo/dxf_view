@@ -27,6 +27,28 @@ import Layout from '@/layout'
 
 export const asyncRouterMap = [
   {
+    path: '/report',
+    component: Layout,
+    redirect: '/report/material',
+    name: '报表',
+    meta: { title: '报表', icon: 'form' },
+    children: [
+      {
+        path: 'material',
+        name: '材料',
+        component: () => import('@/views/report/material'),
+        meta: { title: '材料', icon: 'example' }
+      },
+      {
+        path: 'user',
+        name: '人员',
+        component: () => import('@/views/report/user'),
+        meta: { title: '人员', icon: 'user' }
+      }
+    ]
+  },
+
+  {
     path: '/users',
     component: Layout,
     redirect: '/users/index',
@@ -59,28 +81,6 @@ export const asyncRouterMap = [
         component: () => import('@/views/users/resetPassword'),
         meta: { title: '更新密码', icon: 'tree' },
         hidden: true
-      }
-    ]
-  },
-
-  {
-    path: '/report',
-    component: Layout,
-    redirect: '/report/material',
-    name: '报表',
-    meta: { title: '报表', icon: 'form' },
-    children: [
-      {
-        path: 'material',
-        name: '材料',
-        component: () => import('@/views/report/material'),
-        meta: { title: '材料', icon: 'example' }
-      },
-      {
-        path: 'user',
-        name: '人员',
-        component: () => import('@/views/report/user'),
-        meta: { title: '人员', icon: 'user' }
       }
     ]
   },
@@ -212,7 +212,8 @@ export const constantRouterMap = [
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
-    }]
+    }],
+    hidden: true
   },
 
   // 404 page must be placed at the end !!!

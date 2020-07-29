@@ -13,6 +13,9 @@ export default {
     ...mapGetters([
       'name'
     ])
+  },
+  mounted() {
+    this.$router.push('/report/material')
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-steps :active="1" align-center style="margin-bottom: 30px">
       <el-step title="创建订单" />
-      <el-step title="选择订单使用模板" />
+      <el-step title="选择定制规格" />
     </el-steps>
     <el-form ref="form" :model="form" :rules="rules" auto-complete="on" label-width="120px">
       <el-form-item label="淘宝订单号" prop="oid">
@@ -18,7 +18,7 @@
           type="textarea"
         />
       </el-form-item>
-      <el-form-item label="规格型号" prop="sofa_cover_id">
+      <el-form-item label="定制类型" prop="sofa_cover_id">
         <el-radio-group
           ref="sofa_cover_id"
           v-model="form.sofa_cover_id"

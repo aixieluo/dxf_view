@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-steps v-if="step" :active="2" align-center style="margin-bottom: 30px">
       <el-step title="已完成" />
-      <el-step title="选择订单使用模板" />
+      <el-step title="选择定制规格" />
     </el-steps>
     <el-collapse>
       <el-collapse-item title="订单信息" name="1">
@@ -13,7 +13,7 @@
           <el-form-item label="收件人信息" prop="recipient_information">
             <span>{{ order.recipient_information }}</span>
           </el-form-item>
-          <el-form-item label="规格型号" prop="sofa_cover_id">
+          <el-form-item label="定制类型" prop="sofa_cover_id">
             <span>{{ order.sofa.name }}</span>
           </el-form-item>
           <el-form-item label="材料选择" prop="sofa_cover_item_id">
@@ -27,7 +27,7 @@
     </el-collapse>
     <h5>定制规格</h5>
     <el-tabs v-model="activeIndex" :lazy="true" type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="(design, i) in designs" :label="design.name" :design="design" :name="'index' + i">
+      <el-tab-pane v-for="(design, i) in designs" :label="design.name + (ods[design.id] ? ods[design.id] : '')" :design="design" :name="'index' + i">
         <el-form ref="form" :model="form" :rule="rules" label-width="80px">
           <el-form-item label="规格名称">
             <span>{{ design.name }}</span>
@@ -51,7 +51,7 @@
             <span v-if="order.confirmed_at">{{ form.count }}</span>
             <el-input v-else :ref="form.count" v-model="form.count" />
           </el-form-item>
-          <el-form-item label="耗材(cm)">
+          <el-form-item label="耗用布料(cm)">
             <span>{{ `${form.width * form.count}` }}</span>
           </el-form-item>
           <el-form-item label="辅料">
@@ -104,7 +104,8 @@ export default {
         count: [{ required: true, trigger: 'blur', message: '个数必填' }]
       },
       loading: false,
-      activeIndex: 'index0'
+      activeIndex: 'index0',
+      ods: {}
     }
   },
   computed: {
@@ -120,6 +121,7 @@ export default {
       const { data } = res
       this.order = data
       this.designs = data.sofa.designs
+      this.ods = data.ods
       this.activeDesign = data.sofa.designs[0]
       this.freshDesign()
     })
@@ -157,6 +159,7 @@ export default {
         this.form.lengths = data.lengths || {}
         this.form.count = data.count || ''
         this.form.width = data.width || ''
+        this.ods = data.ods
       }).catch(error => {
         console.log(error)
         this.loading = false
@@ -166,6 +169,7 @@ export default {
       this.loading = true
       delOrderDesign(this.id, this.activeDesign.id).then(res => {
         this.loading = false
+        this.ods = res.data
         this.form = {
           lengths: {},
           count: '',
