@@ -25,9 +25,17 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
+    <div>
+      <h5>已定制规格列表</h5>
+      <el-form auto-complete="on" label-width="120px">
+        <el-form-item v-for="od in ods" :label="od.name">
+          <span>{{ od.info }}</span>
+        </el-form-item>
+      </el-form>
+    </div>
     <h5>定制规格</h5>
     <el-tabs v-model="activeIndex" :lazy="true" type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="(design, i) in designs" :label="design.name + (ods[design.id] ? ods[design.id] : '')" :design="design" :name="'index' + i">
+      <el-tab-pane v-for="(design, i) in designs" :label="design.name" :design="design" :name="'index' + i">
         <el-form ref="form" :model="form" :rule="rules" label-width="80px">
           <el-form-item label="规格名称">
             <span>{{ design.name }}</span>
@@ -105,7 +113,7 @@ export default {
       },
       loading: false,
       activeIndex: 'index0',
-      ods: {}
+      ods: []
     }
   },
   computed: {

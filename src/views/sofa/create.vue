@@ -12,7 +12,15 @@
           ref="templates"
           v-model="form.templates"
         >
-          <el-checkbox v-for="designItem in designList" :label="designItem.id">{{ designItem.name }}</el-checkbox>
+          <el-checkbox v-for="designItem in designList" :label="designItem.id">
+            <div style="display: flex;flex-direction: column">
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="designItem.url"
+                fit="fill"></el-image>
+              {{ designItem.name }}
+            </div>
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item>
