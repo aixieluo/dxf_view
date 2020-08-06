@@ -59,9 +59,9 @@ export function updateOrderDesign(id, d_id, data) {
   })
 }
 
-export function delOrderDesign(id, d_id) {
+export function delOrderDesign(id, d_id, od_id) {
   return request({
-    url: `order/${id}/design/${d_id}/delete`,
+    url: `order/${id}/design/${d_id}/od/${od_id}/delete`,
     method: 'post'
   })
 }

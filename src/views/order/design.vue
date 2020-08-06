@@ -47,6 +47,10 @@
               fit="fill"
             />
           </el-form-item>
+          <el-tabs v-model="odIndex" :lazy="true" type="card" @tab-click="odTabChange">
+            <el-tab-pane v-for="(od, i) in orderDesigns" :label="`方案${i+1}`" :od="od" :i="i" :name="`plan${od.id}`" />
+            <el-tab-pane label="新增" name="add" />
+          </el-tabs>
           <el-form-item v-for="type in design.types" :label="type">
             <span v-if="order.confirmed_at">{{ form.lengths[type] }}</span>
             <el-input
@@ -59,7 +63,7 @@
             <span v-if="order.confirmed_at">{{ form.count }}</span>
             <el-input v-else :ref="form.count" v-model="form.count" />
           </el-form-item>
-          <el-form-item label="耗用布料(cm)">
+          <el-form-item label="耗用布料">
             <span>{{ `${form.width * form.count}` }}</span>
           </el-form-item>
           <el-form-item label="辅料">
@@ -70,7 +74,7 @@
           </el-form-item>
           <el-form-item>
             <el-button v-if="!order.confirmed_at" :loading="loading" type="primary" @click.native="onSubmit">保存</el-button>
-            <el-button v-if="!order.confirmed_at && form.width" :loading="loading" type="danger" @click.native="onDel">删除</el-button>
+            <el-button v-if="!order.confirmed_at && form.od_id" :loading="loading" type="danger" @click.native="onDel">删除</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -80,12 +84,13 @@
 </template>
 
 <script>
-import { order, orderDesign, updateOrderDesign, delOrderDesign } from '../../api/order'
+import { delOrderDesign, order, orderDesign, updateOrderDesign } from '../../api/order'
 
 export default {
   data() {
     return {
       form: {
+        od_id: '',
         lengths: {},
         count: '',
         width: '',
@@ -113,7 +118,9 @@ export default {
       },
       loading: false,
       activeIndex: 'index0',
-      ods: []
+      ods: [],
+      orderDesigns: [],
+      odIndex: 'add'
     }
   },
   computed: {
@@ -142,11 +149,9 @@ export default {
     freshDesign() {
       orderDesign(this.id, this.activeDesign.id).then(res => {
         const { data } = res
-        this.form.lengths = data.lengths || {}
-        this.form.count = data.count || ''
-        this.form.width = data.width || ''
-        this.form.design.accessories = data.design ? data.design.accessories : ''
-        this.form.design.accessories_count = data.design ? data.design.accessories_count : ''
+        this.orderDesigns = data.data
+        this.ods = data.meta.ods
+        this.clearForm()
       })
     },
     onSubmit() {
@@ -163,11 +168,7 @@ export default {
       updateOrderDesign(this.id, this.activeDesign.id, this.form).then(response => {
         this.$message('保存成功')
         this.loading = false
-        const { data } = response
-        this.form.lengths = data.lengths || {}
-        this.form.count = data.count || ''
-        this.form.width = data.width || ''
-        this.ods = data.ods
+        this.freshDesign()
       }).catch(error => {
         console.log(error)
         this.loading = false
@@ -175,22 +176,36 @@ export default {
     },
     onDel() {
       this.loading = true
-      delOrderDesign(this.id, this.activeDesign.id).then(res => {
+      delOrderDesign(this.id, this.activeDesign.id, this.form.od_id).then(res => {
         this.loading = false
         this.ods = res.data
-        this.form = {
-          lengths: {},
-          count: '',
-          width: '',
-          design: {
-            accessories: '',
-            accessories_count: 0
-          }
-        }
+        this.freshDesign()
       }).catch(error => {
         console.log(error)
         this.loading = false
       })
+    },
+    odTabChange(tab) {
+      const i = tab.$attrs.i
+      if (tab.name === 'add') {
+        this.clearForm()
+        return false
+      }
+      this.form.od_id = tab.$attrs.od.id
+      this.form.lengths = this.orderDesigns[i].lengths
+      this.form.count = this.orderDesigns[i].count
+      this.form.width = this.orderDesigns[i].width
+      this.form.design.accessories = this.orderDesigns[i].design ? this.orderDesigns[i].design.accessories : ''
+      this.form.design.accessories_count = this.orderDesigns[i].design ? this.orderDesigns[i].design.accessories_count : ''
+    },
+    clearForm() {
+      this.form.od_id = ''
+      this.form.lengths = {}
+      this.form.count = ''
+      this.form.width = ''
+      this.form.design.accessories = ''
+      this.form.design.accessories_count = ''
+      this.odIndex = 'add'
     }
   }
 }
