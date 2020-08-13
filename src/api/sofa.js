@@ -37,6 +37,13 @@ export function update(id, data) {
   })
 }
 
+export function del(id) {
+  return request({
+    url: `sofa/${id}/delete`,
+    method: 'post'
+  })
+}
+
 export function sofaItems(id, s) {
   return request({
     url: `sofa/${id}/items?${s}`,
@@ -64,6 +71,13 @@ export function updateItem(id, itemId, data) {
     url: `sofa/${id}/items/${itemId}`,
     method: 'post',
     data
+  })
+}
+
+export function delItem(id, itemId) {
+  return request({
+    url: `sofa/${id}/items/${itemId}/delete`,
+    method: 'post'
   })
 }
 

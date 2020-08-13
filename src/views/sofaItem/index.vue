@@ -64,11 +64,22 @@
           <span>{{ scope.row.updated_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="180">
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="text">
             <app-link :to="`/sofa/${id}/items/${scope.row.id}/update`">修改信息</app-link>
           </el-button>
+          <el-popconfirm
+            v-if="scope.row.del"
+            confirm-button-text="好的"
+            cancel-button-text="不用了"
+            icon="el-icon-info"
+            icon-color="red"
+            title="是否删除这个材料，删除后不可恢复"
+            @onConfirm="delSofaItem(scope)"
+          >
+            <el-button slot="reference" type="text">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -88,7 +99,7 @@
 </template>
 
 <script>
-import { sofaItems, sofa } from '../../api/sofa'
+  import { sofaItems, sofa, delItem } from '../../api/sofa'
 import { serialize } from '@/utils/index'
 import AppLink from '../../layout/components/Sidebar/Link'
 
@@ -136,6 +147,11 @@ export default {
     },
     handleSizeChange() {
       this.fetchData()
+    },
+    delSofaItem(rows) {
+      delItem(this.id, rows.row.id).then(res => {
+        this.list.splice(rows.$index)
+      })
     }
   }
 }
