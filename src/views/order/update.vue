@@ -30,7 +30,13 @@
           ref="sofa_cover_item_id"
           v-model="form.sofa_cover_item_id"
         >
-          <el-radio v-for="item in sofaItems" :label="item.id">{{ item.chain_name }}</el-radio>
+          <el-radio v-for="item in sofaItems" :label="item.id">
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="item.url"
+              fit="fill"></el-image>
+            <span>{{ item.chain_name }}</span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="备注" prop="note">
