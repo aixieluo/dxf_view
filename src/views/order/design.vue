@@ -4,28 +4,31 @@
       <el-step title="已完成" />
       <el-step title="选择定制规格" />
     </el-steps>
-    <el-collapse>
-      <el-collapse-item title="订单信息" name="1">
-        <el-form auto-complete="on" label-width="120px">
-          <el-form-item label="淘宝订单号" prop="oid">
-            <span>{{ order.oid }}</span>
-          </el-form-item>
-          <el-form-item label="收件人信息" prop="recipient_information">
-            <span>{{ order.recipient_information }}</span>
-          </el-form-item>
-          <el-form-item label="定制类型" prop="sofa_cover_id">
-            <span>{{ order.sofa.name }}</span>
-          </el-form-item>
-          <el-form-item label="材料选择" prop="sofa_cover_item_id">
-            <span>{{ order.sofa_item.chain_name }}</span>
-          </el-form-item>
-          <el-form-item label="备注" prop="note">
-            <span>{{ order.note }}</span>
-          </el-form-item>
-        </el-form>
-      </el-collapse-item>
-    </el-collapse>
     <div>
+      <h5>订单信息</h5>
+      <el-form auto-complete="on" label-width="120px">
+        <el-form-item label="淘宝订单号" prop="oid">
+          <span>{{ order.oid }}</span>
+        </el-form-item>
+        <el-form-item label="收件人信息" prop="recipient_information">
+          <span>{{ order.recipient_information }}</span>
+        </el-form-item>
+        <el-form-item label="定制类型" prop="sofa_cover_id">
+          <span>{{ order.sofa.name }}</span>
+        </el-form-item>
+        <el-form-item label="材料选择" prop="sofa_cover_item_id">
+          <span>{{ order.sofa_item.chain_name }}</span>
+        </el-form-item>
+        <el-form-item label="订单总额" prop="sofa_cover_item_id">
+          <span>{{ order.total }}</span>
+        </el-form-item>
+        <el-form-item label="数量" prop="sofa_cover_item_id">
+          <span>{{ order.count }}</span>
+        </el-form-item>
+        <el-form-item label="备注" prop="note">
+          <span>{{ order.note }}</span>
+        </el-form-item>
+      </el-form>
       <h5>已定制规格列表</h5>
       <el-form auto-complete="on" label-width="120px">
         <el-form-item v-for="od in ods" :label="od.name">
@@ -132,19 +135,22 @@ export default {
     }
   },
   mounted() {
-    order(this.id).then(res => {
-      const { data } = res
-      this.order = data
-      this.designs = data.sofa.designs
-      this.ods = data.ods
-      this.activeDesign = data.sofa.designs[0]
-      this.freshDesign()
-    })
+    this.freshOrder()
   },
   methods: {
+    freshOrder() {
+      order(this.id).then(res => {
+        const { data } = res
+        this.order = data
+        this.designs = data.sofa.designs
+        this.ods = data.ods
+        this.activeDesign = data.sofa.designs[0]
+        this.freshDesign()
+      })
+    },
     handleClick(tab, event) {
       this.activeDesign = tab.$attrs.design
-      this.freshDesign()
+      this.freshOrder()
     },
     freshDesign() {
       orderDesign(this.id, this.activeDesign.id).then(res => {
@@ -168,7 +174,7 @@ export default {
       updateOrderDesign(this.id, this.activeDesign.id, this.form).then(response => {
         this.$message('保存成功')
         this.loading = false
-        this.freshDesign()
+        this.freshOrder()
       }).catch(error => {
         console.log(error)
         this.loading = false
@@ -179,7 +185,7 @@ export default {
       delOrderDesign(this.id, this.activeDesign.id, this.form.od_id).then(res => {
         this.loading = false
         this.ods = res.data
-        this.freshDesign()
+        this.freshOrder()
       }).catch(error => {
         console.log(error)
         this.loading = false
