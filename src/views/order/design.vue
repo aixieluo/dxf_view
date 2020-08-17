@@ -143,14 +143,16 @@ export default {
         const { data } = res
         this.order = data
         this.designs = data.sofa.designs
-        this.ods = data.ods
-        this.activeDesign = data.sofa.designs[0]
+        // this.ods = data.ods
+        if (!this.activeDesign) {
+          this.activeDesign = data.sofa.designs[0]
+        }
         this.freshDesign()
       })
     },
     handleClick(tab, event) {
       this.activeDesign = tab.$attrs.design
-      this.freshOrder()
+      this.freshDesign()
     },
     freshDesign() {
       orderDesign(this.id, this.activeDesign.id).then(res => {
