@@ -37,6 +37,13 @@ export function update(id, data) {
   })
 }
 
+export function up(id) {
+  return request({
+    url: `sofa/${id}/up`,
+    method: 'post'
+  })
+}
+
 export function del(id) {
   return request({
     url: `sofa/${id}/delete`,

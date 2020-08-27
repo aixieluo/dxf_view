@@ -52,6 +52,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
+          <el-button type="text" @click="up(scope.row.id)">置顶</el-button>
           <el-button type="text"><app-link :to="`/sofa/${scope.row.id}/update`">修改信息</app-link></el-button>
           <el-popconfirm
             v-if="scope.row.del"
@@ -83,7 +84,7 @@
 </template>
 
 <script>
-  import { del, sofas } from '../../api/sofa'
+import { del, sofas, up } from '../../api/sofa'
 import { serialize } from '@/utils/index'
 import AppLink from '../../layout/components/Sidebar/Link'
 
@@ -122,6 +123,11 @@ export default {
     delSofa(rows) {
       del(rows.row.id).then(res => {
         this.list.splice(rows.$index)
+      })
+    },
+    up(id) {
+      up(id).then(res => {
+        this.fetchData()
       })
     }
   }
