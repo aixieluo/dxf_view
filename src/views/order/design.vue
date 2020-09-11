@@ -70,10 +70,10 @@
             <span>{{ `${form.width * form.count}` }}</span>
           </el-form-item>
           <el-form-item label="辅料">
-            <span>{{ `${form.design.accessories}` }}</span>
+            <span>{{ `${form.accessories}` }}</span>
           </el-form-item>
           <el-form-item label="辅料个数">
-            <span>{{ `${form.design.accessories_count * form.count}` }}</span>
+            <span>{{ `${form.accessories_count * form.count}` }}</span>
           </el-form-item>
           <el-form-item>
             <el-button v-if="!order.confirmed_at" :loading="loading" type="primary" @click.native="onSubmit">保存</el-button>
@@ -96,11 +96,7 @@ export default {
         od_id: '',
         lengths: {},
         count: '',
-        width: '',
-        design: {
-          accessories: '',
-          accessories_count: 0
-        }
+        width: ''
       },
       order: {
         oid: '',
@@ -203,16 +199,16 @@ export default {
       this.form.lengths = this.orderDesigns[i].lengths
       this.form.count = this.orderDesigns[i].count
       this.form.width = this.orderDesigns[i].width
-      this.form.design.accessories = this.orderDesigns[i].design ? this.orderDesigns[i].design.accessories : ''
-      this.form.design.accessories_count = this.orderDesigns[i].design ? this.orderDesigns[i].design.accessories_count : ''
+      this.form.accessories = this.orderDesigns[i].accessories
+      this.form.accessories_count = this.orderDesigns[i].accessories_count
     },
     clearForm() {
       this.form.od_id = ''
       this.form.lengths = {}
       this.form.count = ''
       this.form.width = ''
-      this.form.design.accessories = ''
-      this.form.design.accessories_count = ''
+      this.form.accessories = ''
+      this.form.accessories_count = ''
       this.odIndex = 'add'
     }
   }
