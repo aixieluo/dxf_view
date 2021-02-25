@@ -140,7 +140,7 @@ export default {
         this.order = data
         this.designs = data.sofa.designs
         // this.ods = data.ods
-        if (!this.activeDesign) {
+        if (!this.activeDesign || (this.activeDesign != {})) {
           this.activeDesign = data.sofa.designs[0]
         }
         this.freshDesign()
