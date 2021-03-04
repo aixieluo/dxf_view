@@ -150,7 +150,7 @@ export default {
     },
     delSofaItem(rows) {
       delItem(this.id, rows.row.id).then(res => {
-        this.list.splice(rows.$index)
+        this.list.splice(rows.$index, 1)
       })
     }
   }

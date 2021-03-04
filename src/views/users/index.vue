@@ -120,7 +120,7 @@ export default {
     },
     delUser(rows) {
       destroy(rows.row.id).then(res => {
-        this.list.splice(rows.$index)
+        this.list.splice(rows.$index, 1)
       })
     }
   }

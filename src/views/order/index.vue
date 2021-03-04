@@ -216,7 +216,7 @@ export default {
     },
     delOrder(rows) {
       del(rows.row.id).then(res => {
-        this.list.splice(rows.$index)
+        this.list.splice(rows.$index, 1)
       })
     },
     pickDates(dates) {
